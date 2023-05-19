@@ -1,0 +1,346 @@
+/*    queue<process> excuting;
+    queue<process> arrived;
+    queue<process> finalLook;
+    int j=0;
+    for(int i=0; i < totalTime ; i++){
+        if(items[j].arrivalTime == i &&excuting.empty()){
+            excuting.push(items[j++]);
+            excuting.front().waiting=0;
+        }else if(items[j].arrivalTime == i &&!excuting.empty()){
+            arrived.push(items[j++]);
+            arrived.front().waiting = excuting.front().  ;
+        }
+        if(!excuting.empty()){
+            excuting.front().timeSlot--;
+            if(excuting.front().timeSlot == 0){
+                excuting.front().finish=i;
+                finalLook.push(excuting.front());
+                excuting.pop();
+            }
+            int x = arrived.size();
+            for(int i=1; i<x; i++){
+                arrived.front().waiting++;
+                arrived.push(arrived.front());
+                arrived.pop();
+            }
+        }else{
+            int x = arrived.size();
+            process sthProcces[x];
+            int minmum=0;
+            sthProcces[0] = arrived.front();
+            arrived.pop();
+            for(int i=1; i<x; i++){
+                sthProcces[i] = arrived.front();
+                arrived.pop();
+                if(sthProcces[minmum].timeSlot>sthProcces[i].timeSlot)
+                    minmum=i;
+            }
+            excuting.push(sthProcces[minmum]);
+            for(int i=0; i<x; i++){
+                if(i!=minmum)
+                    arrived.push(sthProcces[i]);
+            }
+        }
+    }
+    //arrayCreation(items);
+    for(int i=0; i<noOfProcesses; i++){
+        items[finalLook.front().num]=finalLook.front();
+        finalLook.pop();
+    }
+    FILE *file = fopen(output,"w");
+    printStat(items,file);
+
+
+
+    **********************************************************************
+    for(int i=0; i<totalTime; i++){
+        if(items[j].arrivalTime==i){
+            int minmum = j;
+            for(int k=j+1; k<noOfProcesses; k++){
+                if(items[minmum].arrivalTime == items[k].arrivalTime){
+                    if(items[minmum].timeSlot > items[k].timeSlot){
+                        minmum = k;
+                    }
+                }
+            }
+            execution.push(items[minmum]);
+            j++;
+        }
+    }
+**********************************************************************************
+queue<process> execution;
+    queue<process> arrived;
+    process ready[noOfProcesses];
+    int j=0,k=0;
+    for(int i=0; i<totalTime; i++)
+    {
+        if(items[j].arrivalTime=i && j <noOfProcesses )
+        {
+            if(execution.empty())
+            {
+                items[j].waiting = 0;
+                execution.push(items[j]);
+                printf("%s is pushed in execution\n",items[j].processName);
+                j++;
+            }
+            else
+            {
+                items[j].waiting = execution.front().waiting;
+                arrived.push(items[j]);
+                printf("%s is pushed in arrived\n",items[j].processName);
+                j++;
+            }
+        }
+        if(!execution.empty())
+        {
+            execution.front().timeSlot--;
+            if(execution.front().timeSlot == 0)
+            {
+                ready[k]=execution.front();
+                execution.pop();
+                printf("%s process is poped\n",ready[k].processName);
+                k++;
+            }
+            if(execution.empty() && !arrived.empty())
+            {
+                int x = arrived.size();
+                process sthProcces[x];
+                int minmum=0;
+                sthProcces[0] = arrived.front();
+                arrived.pop();
+                for(int i=1; i<x; i++)
+                {
+                    sthProcces[i] = arrived.front();
+                    arrived.pop();
+                    if(sthProcces[minmum].timeSlot>sthProcces[i].timeSlot)
+                        minmum=i;
+                }
+                execution.push(sthProcces[minmum]);
+                printf("%s is pushed in execution\n",sthProcces[minmum].processName);
+                for(int i=0; i<x; i++)
+                {
+                    if(i!=minmum)
+                    {
+                        sthProcces[i].waiting += execution.front().waiting+execution.front().timeSlot;
+                        arrived.push(sthProcces[i]);
+                        printf("%s is pushed in arrived\n",sthProcces[i]);
+
+                    }
+                }
+            }
+            else
+            {
+                int x = arrived.size();
+                process sth;
+                for(int i=1; i<x; i++)
+                {
+                    sth = arrived.front();
+                    arrived.pop();
+                    sth.waiting += execution.front().timeSlot;
+                    arrived.push(sth);
+                }
+
+            }
+        }
+        else if(execution.empty() && !arrived.empty())
+        {
+            int x = arrived.size();
+            process sthProcces[x];
+            int minmum=0;
+            sthProcces[0] = arrived.front();
+            arrived.pop();
+            for(int i=1; i<x; i++)
+            {
+                sthProcces[i] = arrived.front();
+                arrived.pop();
+                if(sthProcces[minmum].timeSlot>sthProcces[i].timeSlot)
+                    minmum=i;
+            }
+            execution.push(sthProcces[minmum]);
+            printf("%s is pushed in execution\n",sthProcces[minmum].processName);
+            for(int i=0; i<x; i++)
+            {
+                if(i!=minmum)
+                {
+                    sthProcces[i].waiting += execution.front().waiting+execution.front().timeSlot;
+                    arrived.push(sthProcces[i]);
+                    printf("%s is pushed in arrived\n",sthProcces[i]);
+                }
+            }
+        }
+    }
+    printf("%d",k);
+    /*process sorted[noOfProcesses];
+    for(int i=0; i<noOfProcesses; i++)
+    {
+        sorted[i]=ready[i];
+    }
+    sorted[0].finish=sorted[0].arrivalTime+sorted[0].timeSlot;
+    sorted[0].turnOver = sorted[0].finish - sorted[0].arrivalTime;
+    sorted[0].normTurn = (sorted[0].turnOver*1.0)/sorted[0].timeSlot;
+    for(int i=1; i<noOfProcesses; i++)
+    {
+        sorted[i].waiting = sorted[i-1].timeSlot+sorted[i-1].waiting ;
+        sorted[i].finish = sorted[i].waiting + sorted[i].timeSlot;
+        sorted[i].turnOver = sorted[i].finish - sorted[i].arrivalTime;
+        sorted[i].normTurn = (sorted[i].turnOver*1.0)/sorted[i].timeSlot;
+    }
+    for(int i=0; i<noOfProcesses; i++)
+    {
+        items[sorted[i].num]=sorted[i];
+    }
+    FILE *file = fopen(output,"w");
+    printStat(items,file);*/
+    
+    */
+
+**************************************************************************************
+ if(items[j].arrivalTime == i && j<noOfProcesses)
+        {
+            if(execution.empty())
+            {
+                items[j].exeTime=i;
+                execution.push(items[j++]);
+            }
+            else
+            {
+                if(execution.front().timeSlot < items[j].timeSlot)
+                {
+                    readyQueue.push(items[j++]);
+                }
+                else
+                {
+                    readyQueue.push(execution.front());
+                    execution.pop();
+                    items[j].exeTime=i;
+                    execution.push(items[j++]);
+                }
+            }
+        }
+
+            execution.front().timeSlot--;
+            if(execution.front().timeSlot == 0 && !readyQueue.empty())
+            {
+                items[execution.front().num].finish = i+1;
+                execution.pop();
+                execution.push(readyQueue.top());
+                readyQueue.pop();
+            }
+            else
+            {
+                readyQueue.push(execution.front());
+                execution.pop();
+                execution.push(readyQueue.top());
+                readyQueue.pop();
+            }
+            /*int x=readyQueue.size();
+            process sth[x];
+            for(int k=0; k < x; k++)
+            {
+                sth[k]=readyQueue.top();
+                readyQueue.pop();
+                sth[k].waiting++;
+            }
+            for(int k=0; k < x; k++)
+            {
+                readyQueue.push(sth[k]);
+            }*/
+
+**********************************************
+HRRn
+
+/*arrayCreation(items);
+    const char *wait=".|", *working="*|", *notArrived=" |";
+    for(int i=0; i<noOfProcesses; i++)
+    {
+        for(int j=0; j<items[i].arrivalTime; j++)
+        {
+            strcat(twoD_array[i],notArrived);
+        }
+        if(items[i].exeTime ==i){
+            for(int j=items[i].arrivalTime; i<items[i].finish; i++){
+                strcat(twoD_array[i],working);
+            }
+        }
+        else{
+            for(int j=items[i].arrivalTime; j<items[i].exeTime; j++){
+                strcat(twoD_array[i],wait);
+            }
+            for(int j= items[i].exeTime; j<items[i].finish;j++){
+                strcat(twoD_array[i],working);
+            }
+        }
+        for(int j=items[i].finish; j<totalTime; j++){
+            strcat(twoD_array[i],notArrived);
+        }
+
+    }*/
+    
+     if(!readyQueue.empty()){
+                int x=0;
+                process host[readyQueue.size()];
+                while(readyQueue.size()!=0){
+                    host[x]=readyQueue.top();
+                    readyQueue.pop();
+                    x++;
+                }
+                for(int k=0; k<=x; k++){
+                    host[k].waiting = runTime.front().timeSlot;
+                    host[k].responseRatio = (host[k].waiting+host[k].timeSlot)*1.0/host[k].timeSlot;
+                    readyQueue.push(host[k]);
+                }
+            }
+            
+            for(int i=0; i<noOfProcesses; i++)
+    {
+        items[i].turnOver = items[i].finish - items[i].arrivalTime;
+        items[i].normTurn = (items[i].turnOver*1.0)/items[i].timeSlot;
+    }
+    
+    
+    
+    
+    
+    
+    if(items[j].arrivalTime==i && j<noOfProcesses)
+        {
+            if(runTime.empty())
+            {
+                items[j].exeTime=i;
+                printf("%S execute at %d\n",items[j].processName,i);
+                items[j].waiting=0;
+                runTime.push(items[j++]);
+            }
+            else
+            {
+                items[j].waiting = runTime.front().timeSlot;
+                items[j].responseRatio = ((items[j].waiting+items[j].timeSlot)*1.0)/items[j].timeSlot;
+                readyQueue.push(items[j++]);
+            }
+            
+        }
+        runTime.front().timeSlot--;
+        if(runTime.front().timeSlot==0)
+        {
+            items[runTime.front().num].finish = i+1;
+            runTime.pop();
+            runTime.push(readyQueue.top());
+            items[readyQueue.top().num].exeTime=i+1;
+            readyQueue.pop();
+            //queue<process> subReady;
+            /*int x=0;
+            process host[readyQueue.size()];
+            while(readyQueue.size()!=0)
+            {
+                host[x]=readyQueue.top();
+                readyQueue.pop();
+                x++;
+            }
+            for(int k=0; k<=x; k++)
+            {
+                host[k].waiting = runTime.front().timeSlot;
+                host[k].responseRatio = (host[k].waiting+host[k].timeSlot)*1.0/host[k].timeSlot;
+                readyQueue.push(host[k]);
+            }*/
+
+        }

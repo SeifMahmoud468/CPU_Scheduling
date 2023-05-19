@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1669123666 source:/home/seif/Downloads/Lab 4/Algorithms/main.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<queue>
+
